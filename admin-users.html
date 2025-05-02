@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestion des utilisateurs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    table th, table td {
+      padding: 0.8rem;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+
+    table th {
+      background: #f0f0f0;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+
+    .actions button, .actions input {
+      padding: 0.5rem 1rem;
+      margin-left: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #000;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .actions input {
+      background: #fff;
+      color: #000;
+    }
+
+    .actions input:focus {
+      outline: 2px solid #000;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #777;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Gestion des utilisateurs</h1>
+
+    <div class="actions">
+      <input type="text" id="search" placeholder="Rechercher un utilisateur..." />
+      <button id="export">Exporter</button>
+    </div>
+
+    <table id="usersTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Prénom</th>
+          <th>Nom</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Date d'inscription</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Les utilisateurs seront ajoutés ici dynamiquement -->
+      </tbody>
+    </table>
+
+    <div id="emptyMessage" class="empty-message" style="display: none;">
+      Aucun utilisateur trouvé.
+    </div>
+  </div>
+
+  <script>
+    // Exemple de données d'utilisateurs (simulées)
+    const users = [
+      { id: 1, prenom: "Alice", nom: "Dupont", email: "alice@example.com", tel: "0612345678", date: "2025-01-15" },
+      { id: 2, prenom: "Bob", nom: "Martin", email: "bob@example.com", tel: "0623456789", date: "2025-02-20" },
+      { id: 3, prenom: "Charlie", nom: "Durand", email: "charlie@example.com", tel: "0634567890", date: "2025-03-10" }
+    ];
+
+    const tableBody = document.querySelector("#usersTable tbody");
+    const searchInput = document.getElementById("search");
+    const emptyMessage = document.getElementById("emptyMessage");
+
+    // Fonction pour afficher les utilisateurs
+    function displayUsers(filter = "") {
+      tableBody.innerHTML = ""; // Effacez le tableau actuel
+      const filteredUsers = users.filter(user => 
+        user.prenom.toLowerCase().includes(filter.toLowerCase()) ||
+        user.nom.toLowerCase().includes(filter.toLowerCase()) ||
+        user.email.toLowerCase().includes(filter.toLowerCase())
+      );
+
+      if (filteredUsers.length === 0) {
+        emptyMessage.style.display = "block";
+        return;
+      }
+
+      emptyMessage.style.display = "none";
+
+      filteredUsers.forEach(user => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${user.id}</td>
+          <td>${user.prenom}</td>
+          <td>${user.nom}</td>
+          <td>${user.email}</td>
+          <td>${user.tel}</td>
+          <td>${user.date}</td>
+          <td>
+            <button onclick="editUser(${user.id})">Modifier</button>
+            <button onclick="deleteUser(${user.id})" style="background: red;">Supprimer</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Fonction pour modifier un utilisateur
+    function editUser(userId) {
+      alert(`Modifier l'utilisateur avec l'ID ${userId}`);
+      // Ajoutez ici votre logique pour modifier un utilisateur
+    }
+
+    // Fonction pour supprimer un utilisateur
+    function deleteUser(userId) {
+      const confirmation = confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur avec l'ID ${userId} ?`);
+      if (confirmation) {
+        const userIndex = users.findIndex(user => user.id === userId);
+        if (userIndex !== -1) {
+          users.splice(userIndex, 1);
+          displayUsers(searchInput.value); // Rafraîchit la liste
+        }
+      }
+    }
+
+    // Fonction pour exporter les utilisateurs
+    document.getElementById("export").addEventListener("click", () => {
+      const csvContent = "data:text/csv;charset=utf-8," + 
+        ["ID,Prénom,Nom,Email,Téléphone,Date d'inscription"]
+          .concat(users.map(user => 
+            `${user.id},${user.prenom},${user.nom},${user.email},${user.tel},${user.date}`
+          )).join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "utilisateurs.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Recherche dynamique
+    searchInput.addEventListener("input", (e) => {
+      displayUsers(e.target.value);
+    });
+
+    // Afficher les utilisateurs au chargement de la page
+    displayUsers();
+  </script>
+</body>
+</html>
