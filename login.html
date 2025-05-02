@@ -81,15 +81,6 @@
       margin-bottom: 1rem;
     }
 
-    .forgot-link a {
-      color: #007bff;
-      text-decoration: none;
-    }
-    
-    .forgot-link a:hover {
-      text-decoration: underline;
-    }
-
     .checkbox-group {
       display: flex;
       align-items: center;
@@ -113,21 +104,21 @@
       margin-top: 1.5rem;
     }
 
-    .footer a {
+    /* Style général pour tous les liens */
+    a {
       color: #007bff;
       text-decoration: none;
     }
 
-    .footer a:hover {
+    a:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <header>
-  <img src="logo-parentneurosoutien.png" alt="Logo ParentNeuroSoutien" style="max-height: 60px;" />
+    <img src="logo-parentneurosoutien.png" alt="Logo ParentNeuroSoutien" />
   </header>
-
 
   <main>
     <div class="container">
@@ -142,7 +133,7 @@
           <label for="password">Mot de passe</label>
           <input type="password" id="password" required />
           <div class="forgot-link">
-          <a href="#">Mot de passe oublié ?</a>
+            <a href="#">Mot de passe oublié ?</a>
           </div>
         </div>
 
@@ -155,7 +146,6 @@
 
       <div class="footer">
         Vous n'avez pas de compte ? <a href="register.html">Créer un compte</a>
-
       </div>
     </div>
   </main>
