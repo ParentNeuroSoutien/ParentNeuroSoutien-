@@ -5,7 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestion des utilisateurs</title>
   <style>
-    /* Styles existants */
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 1000px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      width: 60%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background: #000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f0f0f0;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: #999;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -37,18 +99,11 @@
   </div>
 
   <script>
-    // Vérification d'authentification
     if (!localStorage.getItem('authenticated')) {
-      // Redirection vers la page de connexion si non authentifié
       window.location.href = "login.html";
     }
 
-    // Code existant pour la gestion des utilisateurs
-    const users = [
-      { id: 1, prenom: "Alice", nom: "Dupont", email: "alice@example.com", tel: "0612345678", date: "2025-01-15" },
-      { id: 2, prenom: "Bob", nom: "Martin", email: "bob@example.com", tel: "0623456789", date: "2025-02-20" },
-      { id: 3, prenom: "Charlie", nom: "Durand", email: "charlie@example.com", tel: "0634567890", date: "2025-03-10" }
-    ];
+    let users = JSON.parse(localStorage.getItem("users")) || [];
 
     const tableBody = document.querySelector("#usersTable tbody");
     const searchInput = document.getElementById("search");
@@ -97,6 +152,7 @@
         const userIndex = users.findIndex(user => user.id === userId);
         if (userIndex !== -1) {
           users.splice(userIndex, 1);
+          localStorage.setItem("users", JSON.stringify(users));
           displayUsers(searchInput.value);
         }
       }
