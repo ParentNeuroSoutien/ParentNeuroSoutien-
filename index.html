@@ -26,7 +26,6 @@
       text-align: left;
     }
 
-
     h2 {
       text-align: center;
       margin-bottom: 0.5rem;
@@ -163,10 +162,14 @@
     const form = document.getElementById('signupForm');
 
     form.addEventListener('submit', function(event) {
+      event.preventDefault(); // Empêche le comportement par défaut de la soumission
+
       let isValid = true;
 
+      // Réinitialiser les messages d'erreur
       document.querySelectorAll('.error').forEach(el => el.textContent = '');
 
+      // Validation des champs
       if (!form.prenom.value.trim()) {
         document.getElementById('prenomError').textContent = "Le prénom est requis.";
         isValid = false;
@@ -184,8 +187,6 @@
       }
 
       const password = form.mdp.value;
-      const password2 = form.mdp2?.value;
-
       if (password.length < 8) {
         document.getElementById('mdpError').textContent = "Le mot de passe doit contenir au moins 8 caractères.";
         isValid = false;
@@ -204,14 +205,40 @@
       }
 
       const telRegex = /^0[1-9](\s?\d{2}){4}$/;
-      if (form.tel.value && !telRegex.test(form.tel.value)) {
+      if (!telRegex.test(form.tel.value)) {
         document.getElementById('telError').textContent = "Veuillez entrer un numéro de téléphone valide (format français).";
         isValid = false;
       }
 
       if (!isValid) {
-        event.preventDefault();
+        return; // Ne pas continuer si le formulaire est invalide
       }
+
+      // Récupérer les données du formulaire
+      const formData = {
+        prenom: form.prenom.value.trim(),
+        nom: form.nom.value.trim(),
+        email: form.email.value.trim(),
+        mdp: form.mdp.value,
+        tel: form.tel.value.trim(),
+        origine: form.origine.value,
+        conditionsAcceptees: form.querySelector('#cgu').checked,
+        newsletter: form.querySelector('#newsletter').checked
+      };
+
+      console.log('Données du formulaire :', formData);
+
+      // Exemple d'envoi des données à un serveur
+      // fetch('https://votre-serveur.com/api/inscription', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify(formData)
+      // })
+      // .then(response => response.json())
+      // .then(data => console.log('Réponse du serveur :', data))
+      // .catch(error => console.error('Erreur :', error));
     });
   </script>
 </body>
