@@ -201,16 +201,7 @@
         isValid = false;
       }
 
-      // CAPTCHA validation
-      if (grecaptcha.getResponse() === '') {
-        document.getElementById('captchaError').textContent = "Veuillez compléter le CAPTCHA.";
-        isValid = false;
-      }
-
-      if (!isValid) {
-        event.preventDefault();
-      }
-    });
+      
   </script>
 </body>
 </html>
