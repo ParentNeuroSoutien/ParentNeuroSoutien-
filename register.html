@@ -133,28 +133,22 @@
 
       <form id="signupForm">
         <label for="prenom">Prénom</label>
-        <input type="text" id="prenom" name="prenom" required />
-        <div id="prenomError" class="error"></div>
+        <input type="text" id="prenom" name="data[prenom]" required />
 
         <label for="nom">Nom</label>
-        <input type="text" id="nom" name="nom" required />
-        <div id="nomError" class="error"></div>
+        <input type="text" id="nom" name="data[nom]" required />
 
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" required />
-        <div id="emailError" class="error"></div>
+        <input type="email" id="email" name="data[email]" required />
 
         <label for="mdp">Mot de passe</label>
-        <input type="password" id="mdp" name="mdp" placeholder="Au moins 8 caractères" required />
-        <div id="passwordStrength" class="password-strength"></div>
-        <div id="mdpError" class="error"></div>
+        <input type="password" id="mdp" name="data[mdp]" required />
 
         <label for="tel">Téléphone</label>
-        <input type="tel" id="tel" name="tel" placeholder="06 12 34 56 78" required />
-        <div id="telError" class="error"></div>
+        <input type="tel" id="tel" name="data[tel]" required />
 
         <label for="origine">Comment avez-vous connu notre site ?</label>
-        <select id="origine" name="origine">
+        <select id="origine" name="data[origine]">
           <option value="">Sélectionnez une option</option>
           <option value="reseaux">Réseaux sociaux</option>
           <option value="ami">Recommandation</option>
@@ -165,14 +159,16 @@
 
         <div class="checkbox-group">
           <div class="checkbox-line">
-            <input type="checkbox" id="cgu" required />
-            <label for="cgu">J'accepte les conditions d'utilisation et la politique de confidentialité</label>
+            <input type="checkbox" id="cgu" name="data[conditionsAcceptees]" value="Oui" required />
+            <label for="cgu">J'accepte les conditions d'utilisation</label>
           </div>
           <div class="checkbox-line">
-            <input type="checkbox" id="newsletter" />
-            <label for="newsletter">Je souhaite recevoir la newsletter et les offres spéciales</label>
+            <input type="checkbox" id="newsletter" name="data[newsletter]" value="Oui" />
+            <label for="newsletter">Je souhaite recevoir la newsletter</label>
           </div>
         </div>
+
+        <input type="hidden" name="data[date]" id="dateField" />
 
         <button type="submit">Créer mon compte</button>
       </form>
@@ -185,80 +181,28 @@
 
   <script>
     const form = document.getElementById('signupForm');
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzL386WcOHNCfbf74KU0luCoI-RE6g-17mi1EzCttdVgR6VZeA1TFmT-Svwi2wzpoIH8A/exec";
+    const dateField = document.getElementById('dateField');
+    const sheetdbUrl = "https://sheetdb.io/api/v1/n0zda9ixcv0z1"; // remplace ceci !
 
-    
-    form.addEventListener('submit', function(event) {
-  event.preventDefault();
-  let isValid = true;
-  document.querySelectorAll('.error').forEach(el => el.textContent = '');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
 
-  if (!form.prenom.value.trim()) {
-    document.getElementById('prenomError').textContent = "Le prénom est requis.";
-    isValid = false;
-  }
+      // Ajouter la date d'inscription
+      dateField.value = new Date().toISOString().split("T")[0];
 
-  if (!form.nom.value.trim()) {
-    document.getElementById('nomError').textContent = "Le nom est requis.";
-    isValid = false;
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(form.email.value)) {
-    document.getElementById('emailError').textContent = "Veuillez entrer un email valide.";
-    isValid = false;
-  }
-
-  const password = form.mdp.value;
-  if (password.length < 8) {
-    document.getElementById('mdpError').textContent = "Le mot de passe doit contenir au moins 8 caractères.";
-    isValid = false;
-  }
-
-  const strengthText = document.getElementById('passwordStrength');
-  if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password)) {
-    strengthText.textContent = "Force du mot de passe : Fort";
-    strengthText.style.color = "green";
-  } else if (password.length >= 6) {
-    strengthText.textContent = "Force du mot de passe : Moyen";
-    strengthText.style.color = "orange";
-  } else {
-    strengthText.textContent = "Force du mot de passe : Faible";
-    strengthText.style.color = "red";
-  }
-
-  const telRegex = /^0[1-9](\s?\d{2}){4}$/;
-  if (!telRegex.test(form.tel.value)) {
-    document.getElementById('telError').textContent = "Veuillez entrer un numéro de téléphone valide (format français).";
-    isValid = false;
-  }
-
-  if (!isValid) return;
-
-  const formData = {
-    prenom: form.prenom.value.trim(),
-    nom: form.nom.value.trim(),
-    email: form.email.value.trim(),
-    mdp: form.mdp.value,
-    tel: form.tel.value.trim(),
-    conditionsAcceptees: form.querySelector('#cgu').checked,
-    newsletter: form.querySelector('#newsletter').checked
-  };
-
-  fetch("https://script.google.com/macros/s/AKfycbzL386WcOHNCfbf74KU0luCoI-RE6g-17mi1EzCttdVgR6VZeA1TFmT-Svwi2wzpoIH8A/exec", {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newUser)
-  })
-  .then(response => response.text())
-  .then(result => {
-    alert("Compte créé avec succès !");
-    window.location.href = "login.html";
-  })
-  
-});
-
+      fetch(sheetdbUrl, {
+        method: "POST",
+        body: new FormData(form)
+      })
+      .then(res => {
+        alert("Compte créé avec succès !");
+        window.location.href = "login.html";
+      })
+      .catch(err => {
+        alert("Erreur lors de l'enregistrement.");
+        console.error(err);
+      });
+    });
   </script>
 </body>
 </html>
