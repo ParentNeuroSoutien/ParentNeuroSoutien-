@@ -18,7 +18,7 @@
 
     .container {
       background: #fff;
-      padding: 1.5rem 3rem; /* ← espace horizontal augmenté */
+      padding: 1.5rem 3rem;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       max-width: 400px;
@@ -75,15 +75,18 @@
     }
 
     a {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.85rem;
       color: #007bff;
       text-decoration: none;
     }
 
     a:hover {
       text-decoration: underline;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
     }
 
     .checkbox-group {
@@ -156,92 +159,7 @@
 
     <div class="footer">
       Vous avez déjà un compte ? <a href="login.html">Se connecter</a>
-
     </div>
   </div>
-
-  <script>
-    const form = document.getElementById('signupForm');
-
-    form.addEventListener('submit', function(event) {
-      event.preventDefault(); // Empêche le comportement par défaut de la soumission
-
-      let isValid = true;
-
-      // Réinitialiser les messages d'erreur
-      document.querySelectorAll('.error').forEach(el => el.textContent = '');
-
-      // Validation des champs
-      if (!form.prenom.value.trim()) {
-        document.getElementById('prenomError').textContent = "Le prénom est requis.";
-        isValid = false;
-      }
-
-      if (!form.nom.value.trim()) {
-        document.getElementById('nomError').textContent = "Le nom est requis.";
-        isValid = false;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(form.email.value)) {
-        document.getElementById('emailError').textContent = "Veuillez entrer un email valide.";
-        isValid = false;
-      }
-
-      const password = form.mdp.value;
-      if (password.length < 8) {
-        document.getElementById('mdpError').textContent = "Le mot de passe doit contenir au moins 8 caractères.";
-        isValid = false;
-      }
-
-      const strengthText = document.getElementById('passwordStrength');
-      if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password)) {
-        strengthText.textContent = "Force du mot de passe : Fort";
-        strengthText.style.color = "green";
-      } else if (password.length >= 6) {
-        strengthText.textContent = "Force du mot de passe : Moyen";
-        strengthText.style.color = "orange";
-      } else {
-        strengthText.textContent = "Force du mot de passe : Faible";
-        strengthText.style.color = "red";
-      }
-
-      const telRegex = /^0[1-9](\s?\d{2}){4}$/;
-      if (!telRegex.test(form.tel.value)) {
-        document.getElementById('telError').textContent = "Veuillez entrer un numéro de téléphone valide (format français).";
-        isValid = false;
-      }
-
-      if (!isValid) {
-        return; // Ne pas continuer si le formulaire est invalide
-      }
-
-      // Récupérer les données du formulaire
-      const formData = {
-        prenom: form.prenom.value.trim(),
-        nom: form.nom.value.trim(),
-        email: form.email.value.trim(),
-        mdp: form.mdp.value,
-        tel: form.tel.value.trim(),
-        origine: form.origine.value,
-        conditionsAcceptees: form.querySelector('#cgu').checked,
-        newsletter: form.querySelector('#newsletter').checked
-      };
-
-      console.log('Données du formulaire :', formData);
-
-      // Exemple d'envoi des données à un serveur
-      // fetch('https://votre-serveur.com/api/inscription', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(formData)
-      // })
-      // .then(response => response.json())
-      // .then(data => console.log('Réponse du serveur :', data))
-      // .catch(error => console.error('Erreur :', error));
-    });
-  </script>
 </body>
 </html>
