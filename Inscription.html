@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription - ParentNeuroSoutien</title>
+</head>
+<body>
+  <h1>Inscription</h1>
+  <form id="inscriptionForm" action="traitement.php" method="POST">
+    <label for="nom">Nom :</label><br>
+    <input type="text" id="nom" name="nom" required placeholder="Entrez votre nom"><br>
+
+    <label for="email">Email :</label><br>
+    <input type="email" id="email" name="email" required placeholder="Entrez votre adresse email"><br>
+
+    <label for="motdepasse">Mot de passe :</label><br>
+    <input type="password" id="motdepasse" name="motdepasse" minlength="8" required placeholder="Au moins 8 caractères"><br>
+
+    <button type="submit">S’inscrire</button>
+  </form>
+
+  <!-- Validation JavaScript -->
+  <script>
+    document.getElementById("inscriptionForm").addEventListener("submit", function (e) {
+      const nom = document.getElementById("nom");
+      const email = document.getElementById("email");
+      const motdepasse = document.getElementById("motdepasse");
+
+      // Validation du champ Nom
+      if (nom.value.trim() === "") {
+        alert("Le champ Nom est obligatoire.");
+        e.preventDefault();
+        return;
+      }
+
+      // Validation de l'email avec une expression régulière supplémentaire
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email.value)) {
+        alert("Veuillez entrer une adresse email valide.");
+        e.preventDefault();
+        return;
+      }
+
+      // Validation du mot de passe
+      if (motdepasse.value.length < 8) {
+        alert("Le mot de passe doit contenir au moins 8 caractères.");
+        e.preventDefault();
+        return;
+      }
+    });
+  </script>
+</body>
+</html>
