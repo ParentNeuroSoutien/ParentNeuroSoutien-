@@ -124,13 +124,17 @@
       </select>
 
       <div class="checkbox-group">
-        <label><input type="checkbox" required> J'accepte les conditions d'utilisation et la politique de confidentialité</label><br>
-        <label><input type="checkbox"> Je souhaite recevoir la newsletter et les offres spéciales</label>
-      </div>
+  <div class="checkbox-line">
+    <input type="checkbox" id="cgu" required>
+    <label for="cgu">J'accepte les conditions d'utilisation et la politique de confidentialité</label>
+  </div>
+  <div class="checkbox-line">
+    <input type="checkbox" id="newsletter">
+    <label for="newsletter">Je souhaite recevoir la newsletter et les offres spéciales</label>
+  </div>
+</div>
 
-      <!-- Google reCAPTCHA -->
-      <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
-      <div id="captchaError" class="error"></div>
+
 
       <button type="submit">Créer mon compte</button>
     </form>
