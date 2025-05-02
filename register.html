@@ -189,71 +189,79 @@
 
     
     form.addEventListener('submit', function(event) {
-      event.preventDefault();
-      let isValid = true;
-      document.querySelectorAll('.error').forEach(el => el.textContent = '');
+  event.preventDefault();
+  let isValid = true;
+  document.querySelectorAll('.error').forEach(el => el.textContent = '');
 
-      if (!form.prenom.value.trim()) {
-        document.getElementById('prenomError').textContent = "Le prénom est requis.";
-        isValid = false;
-      }
+  if (!form.prenom.value.trim()) {
+    document.getElementById('prenomError').textContent = "Le prénom est requis.";
+    isValid = false;
+  }
 
-      if (!form.nom.value.trim()) {
-        document.getElementById('nomError').textContent = "Le nom est requis.";
-        isValid = false;
-      }
+  if (!form.nom.value.trim()) {
+    document.getElementById('nomError').textContent = "Le nom est requis.";
+    isValid = false;
+  }
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(form.email.value)) {
-        document.getElementById('emailError').textContent = "Veuillez entrer un email valide.";
-        isValid = false;
-      }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(form.email.value)) {
+    document.getElementById('emailError').textContent = "Veuillez entrer un email valide.";
+    isValid = false;
+  }
 
-      const password = form.mdp.value;
-      if (password.length < 8) {
-        document.getElementById('mdpError').textContent = "Le mot de passe doit contenir au moins 8 caractères.";
-        isValid = false;
-      }
+  const password = form.mdp.value;
+  if (password.length < 8) {
+    document.getElementById('mdpError').textContent = "Le mot de passe doit contenir au moins 8 caractères.";
+    isValid = false;
+  }
 
-      const strengthText = document.getElementById('passwordStrength');
-      if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password)) {
-        strengthText.textContent = "Force du mot de passe : Fort";
-        strengthText.style.color = "green";
-      } else if (password.length >= 6) {
-        strengthText.textContent = "Force du mot de passe : Moyen";
-        strengthText.style.color = "orange";
-      } else {
-        strengthText.textContent = "Force du mot de passe : Faible";
-        strengthText.style.color = "red";
-      }
+  const strengthText = document.getElementById('passwordStrength');
+  if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password)) {
+    strengthText.textContent = "Force du mot de passe : Fort";
+    strengthText.style.color = "green";
+  } else if (password.length >= 6) {
+    strengthText.textContent = "Force du mot de passe : Moyen";
+    strengthText.style.color = "orange";
+  } else {
+    strengthText.textContent = "Force du mot de passe : Faible";
+    strengthText.style.color = "red";
+  }
 
-      const telRegex = /^0[1-9](\s?\d{2}){4}$/;
-      if (!telRegex.test(form.tel.value)) {
-        document.getElementById('telError').textContent = "Veuillez entrer un numéro de téléphone valide (format français).";
-        isValid = false;
-      }
+  const telRegex = /^0[1-9](\s?\d{2}){4}$/;
+  if (!telRegex.test(form.tel.value)) {
+    document.getElementById('telError').textContent = "Veuillez entrer un numéro de téléphone valide (format français).";
+    isValid = false;
+  }
 
-      if (!isValid) return;
+  if (!isValid) return;
 
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-      const newUser = {
-        id: Date.now(),
-        prenom: form.prenom.value.trim(),
-        nom: form.nom.value.trim(),
-        email: form.email.value.trim(),
-        mdp: form.mdp.value,
-        tel: form.tel.value.trim(),
-        origine: form.origine.value,
-        date: new Date().toISOString().split("T")[0],
-        conditionsAcceptees: form.querySelector('#cgu').checked,
-        newsletter: form.querySelector('#newsletter').checked
-      };
+  const formData = {
+    prenom: form.prenom.value.trim(),
+    nom: form.nom.value.trim(),
+    email: form.email.value.trim(),
+    mdp: form.mdp.value,
+    tel: form.tel.value.trim(),
+    origine: form.origine.value,
+    conditionsAcceptees: form.querySelector('#cgu').checked,
+    newsletter: form.querySelector('#newsletter').checked
+  };
 
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("Compte créé avec succès !");
-      window.location.href = "login.html";
-    });
+  fetch(scriptURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData)
+  })
+  .then(response => response.text())
+  .then(result => {
+    alert("Compte créé avec succès !");
+    window.location.href = "login.html";
+  })
+  .catch(error => {
+    alert("Erreur lors de l'enregistrement. Vérifie le script Google.");
+    console.error("Erreur:", error);
+  });
+});
+
   </script>
 </body>
 </html>
