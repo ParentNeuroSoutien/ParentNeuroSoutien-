@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Créer un compte</title>
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -49,12 +50,16 @@
       color: #333;
     }
 
-    .checkbox-group {
+    .error {
+      color: red;
+      font-size: 0.8rem;
       margin-bottom: 1rem;
     }
 
-    .checkbox-group label {
+    .password-strength {
       font-size: 0.85rem;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
     }
 
     button {
@@ -85,24 +90,31 @@
     <h2>Créer un compte</h2>
     <p>Rejoignez notre communauté et accédez à des ressources exclusives</p>
 
-    <form>
+    <form id="signupForm">
       <label for="prenom">Prénom</label>
       <input type="text" id="prenom" name="prenom" required>
+      <div id="prenomError" class="error"></div>
 
       <label for="nom">Nom</label>
       <input type="text" id="nom" name="nom" required>
+      <div id="nomError" class="error"></div>
 
       <label for="email">Email</label>
       <input type="email" id="email" name="email" required>
+      <div id="emailError" class="error"></div>
 
       <label for="mdp">Mot de passe</label>
       <input type="password" id="mdp" name="mdp" placeholder="Au moins 8 caractères" required>
+      <div id="passwordStrength" class="password-strength"></div>
+      <div id="mdpError" class="error"></div>
 
       <label for="mdp2">Confirmer le mot de passe</label>
       <input type="password" id="mdp2" name="mdp2" required>
+      <div id="mdp2Error" class="error"></div>
 
       <label for="tel">Téléphone (optionnel)</label>
       <input type="tel" id="tel" name="tel" placeholder="06 12 34 56 78">
+      <div id="telError" class="error"></div>
 
       <label for="origine">Comment avez-vous connu notre site ?</label>
       <select id="origine" name="origine">
@@ -119,6 +131,10 @@
         <label><input type="checkbox"> Je souhaite recevoir la newsletter et les offres spéciales</label>
       </div>
 
+      <!-- Google reCAPTCHA -->
+      <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+      <div id="captchaError" class="error"></div>
+
       <button type="submit">Créer mon compte</button>
     </form>
 
@@ -126,5 +142,78 @@
       Vous avez déjà un compte ? <a href="#">Se connecter</a>
     </div>
   </div>
+
+  <script>
+    const form = document.getElementById('signupForm');
+
+    form.addEventListener('submit', function(event) {
+      let isValid = true;
+
+      // Clear previous errors
+      document.querySelectorAll('.error').forEach(el => el.textContent = '');
+
+      // Prénom et nom validation
+      if (!form.prenom.value.trim()) {
+        document.getElementById('prenomError').textContent = "Le prénom est requis.";
+        isValid = false;
+      }
+
+      if (!form.nom.value.trim()) {
+        document.getElementById('nomError').textContent = "Le nom est requis.";
+        isValid = false;
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email.value)) {
+        document.getElementById('emailError').textContent = "Veuillez entrer un email valide.";
+        isValid = false;
+      }
+
+      // Password validation
+      const password = form.mdp.value;
+      const password2 = form.mdp2.value;
+
+      if (password.length < 8) {
+        document.getElementById('mdpError').textContent = "Le mot de passe doit contenir au moins 8 caractères.";
+        isValid = false;
+      }
+
+      if (password !== password2) {
+        document.getElementById('mdp2Error').textContent = "Les mots de passe ne correspondent pas.";
+        isValid = false;
+      }
+
+      // Password strength indicator
+      const strengthText = document.getElementById('passwordStrength');
+      if (password.length >= 8 && /[A-Z]/.test(password) && /[0-9]/.test(password) && /[!@#$%^&*]/.test(password)) {
+        strengthText.textContent = "Force du mot de passe : Fort";
+        strengthText.style.color = "green";
+      } else if (password.length >= 6) {
+        strengthText.textContent = "Force du mot de passe : Moyen";
+        strengthText.style.color = "orange";
+      } else {
+        strengthText.textContent = "Force du mot de passe : Faible";
+        strengthText.style.color = "red";
+      }
+
+      // Telephone validation
+      const telRegex = /^0[1-9](\s?\d{2}){4}$/;
+      if (form.tel.value && !telRegex.test(form.tel.value)) {
+        document.getElementById('telError').textContent = "Veuillez entrer un numéro de téléphone valide (format français).";
+        isValid = false;
+      }
+
+      // CAPTCHA validation
+      if (grecaptcha.getResponse() === '') {
+        document.getElementById('captchaError').textContent = "Veuillez compléter le CAPTCHA.";
+        isValid = false;
+      }
+
+      if (!isValid) {
+        event.preventDefault();
+      }
+    });
+  </script>
 </body>
 </html>
