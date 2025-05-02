@@ -241,12 +241,11 @@
     email: form.email.value.trim(),
     mdp: form.mdp.value,
     tel: form.tel.value.trim(),
-    origine: form.origine.value,
     conditionsAcceptees: form.querySelector('#cgu').checked,
     newsletter: form.querySelector('#newsletter').checked
   };
 
-  fetch(scriptURL, {
+  fetch("https://script.google.com/macros/s/AKfycbwMpAMYfqTQWft-kj6EflC8Af0Q7YZKkPDN1MJo60rpyqeOAsBEG2OsRrjJ3dV9hwRf/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData)
